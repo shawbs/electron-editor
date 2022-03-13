@@ -537,19 +537,19 @@ eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var vue_
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-eval("var map = {\n\t\"./Counter.js\": \"./src/renderer/store/modules/Counter.js\",\n\t\"./index.js\": \"./src/renderer/store/modules/index.js\"\n};\n\n\nfunction webpackContext(req) {\n\tvar id = webpackContextResolve(req);\n\treturn __webpack_require__(id);\n}\nfunction webpackContextResolve(req) {\n\tif(!__webpack_require__.o(map, req)) {\n\t\tvar e = new Error(\"Cannot find module '\" + req + \"'\");\n\t\te.code = 'MODULE_NOT_FOUND';\n\t\tthrow e;\n\t}\n\treturn map[req];\n}\nwebpackContext.keys = function webpackContextKeys() {\n\treturn Object.keys(map);\n};\nwebpackContext.resolve = webpackContextResolve;\nmodule.exports = webpackContext;\nwebpackContext.id = \"./src/renderer/store/modules sync \\\\.js$\";\n\n//# sourceURL=webpack:///./src/renderer/store/modules_sync_nonrecursive_\\.js$?");
+eval("var map = {\n\t\"./editor.js\": \"./src/renderer/store/modules/editor.js\",\n\t\"./index.js\": \"./src/renderer/store/modules/index.js\"\n};\n\n\nfunction webpackContext(req) {\n\tvar id = webpackContextResolve(req);\n\treturn __webpack_require__(id);\n}\nfunction webpackContextResolve(req) {\n\tif(!__webpack_require__.o(map, req)) {\n\t\tvar e = new Error(\"Cannot find module '\" + req + \"'\");\n\t\te.code = 'MODULE_NOT_FOUND';\n\t\tthrow e;\n\t}\n\treturn map[req];\n}\nwebpackContext.keys = function webpackContextKeys() {\n\treturn Object.keys(map);\n};\nwebpackContext.resolve = webpackContextResolve;\nmodule.exports = webpackContext;\nwebpackContext.id = \"./src/renderer/store/modules sync \\\\.js$\";\n\n//# sourceURL=webpack:///./src/renderer/store/modules_sync_nonrecursive_\\.js$?");
 
 /***/ }),
 
-/***/ "./src/renderer/store/modules/Counter.js":
-/*!***********************************************!*\
-  !*** ./src/renderer/store/modules/Counter.js ***!
-  \***********************************************/
+/***/ "./src/renderer/store/modules/editor.js":
+/*!**********************************************!*\
+  !*** ./src/renderer/store/modules/editor.js ***!
+  \**********************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-eval("__webpack_require__.r(__webpack_exports__);\nvar state = {\n  main: 0\n};\n\nvar mutations = {\n  DECREMENT_MAIN_COUNTER: function DECREMENT_MAIN_COUNTER(state) {\n    state.main--;\n  },\n  INCREMENT_MAIN_COUNTER: function INCREMENT_MAIN_COUNTER(state) {\n    state.main++;\n  }\n};\n\nvar actions = {\n  someAsyncTask: function someAsyncTask(_ref) {\n    var commit = _ref.commit;\n\n    commit('INCREMENT_MAIN_COUNTER');\n  }\n};\n\n/* harmony default export */ __webpack_exports__[\"default\"] = ({\n  state: state,\n  mutations: mutations,\n  actions: actions\n});\n\n//# sourceURL=webpack:///./src/renderer/store/modules/Counter.js?");
+eval("__webpack_require__.r(__webpack_exports__);\nvar state = {\n  files: [],\n  folders: []\n};\n\nvar mutations = {\n  set_files: function set_files(state, data) {\n    state.files = data;\n  },\n  set_folders: function set_folders(state, data) {\n    state.folders = data;\n  }\n};\n\nvar actions = {};\n\n/* harmony default export */ __webpack_exports__[\"default\"] = ({\n  state: state,\n  mutations: mutations,\n  actions: actions\n});\n\n//# sourceURL=webpack:///./src/renderer/store/modules/editor.js?");
 
 /***/ }),
 
