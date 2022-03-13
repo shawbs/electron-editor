@@ -1,0 +1,264 @@
+
+
+// 浮动与清除浮动
+.fn-left {
+    float: left;
+}
+
+.fn-right {
+    float: right;
+}
+
+.fn-clear {
+    @include clearfix;
+}
+
+.hide{
+    display: none;
+}
+
+// 隐藏
+.fn-hide {
+    overflow: hidden !important;
+}
+
+// 超出隐藏
+.fn-hidden {
+    overflow: hidden !important;
+}
+
+.fn-hidden-x {
+    overflow-x: hidden !important;
+}
+
+.fn-hidden-y {
+    overflow-y: hidden !important;
+}
+
+// 字体大小
+.fs-mini {
+    font-size: 70% !important;
+}
+
+.fs-small {
+    font-size: 80% !important;
+}
+
+.fs-little {
+    font-size: 90% !important;
+}
+
+.fs-normal {
+    font-size: inherit !important;
+}
+
+.fs-big {
+    font-size: 120% !important;
+}
+
+.fs-more {
+    font-size: 140% !important;
+}
+
+.fs-super {
+    font-size: 180% !important;
+}
+
+// 字体加粗
+.fw-bold {
+    font-weight: bold !important;
+}
+
+.fw-normal {
+    font-weight: normal !important;
+}
+
+// 文本对齐
+@each $key, $value in (c:center, l:left, r:right, j:justify) {
+    .text-#{$value} {
+        text-align: $value !important;
+    }
+}
+
+// 垂直对齐
+@each $key, $value in (t:top, m:middle, b:bottom) {
+    .va-#{$key} {
+        vertical-align: $value !important;
+    }
+}
+
+// 1px 边框
+@each $key, $value in (all: all,t: top,l: left,r: right,b: bottom){
+  @if $key == all {
+    .border{
+      border: $border;
+    }
+  }@else{
+    .border-#{$key}{
+      border-#{$value}: $border;
+    }
+  }
+}
+
+// 模盒
+@each $key, $value in (b:block, i:inline, ib:inline-block) {
+    .d-#{$key} {
+        display: $value !important;
+    }
+}
+
+// 间距
+@each $key, $value in (0,5,10,15,20,25,30,35,40,45,50,55,60,65) {
+    .m-#{$key}{
+        margin: #{$key}px !important;
+    }
+    .mt-#{$key}{
+        margin-top: #{$key}px !important;
+    }
+    .mb-#{$key}{
+        margin-bottom: #{$key}px !important;
+    }
+    .ml-#{$key}{
+        margin-left: #{$key}px !important;
+    }
+    .mr-#{$key}{
+        margin-right: #{$key}px !important;
+    }
+    .p-#{$key}{
+        padding: #{$key}px !important;
+    }
+    .pt-#{$key}{
+        padding-top: #{$key}px !important;
+    }
+    .pb-#{$key}{
+        padding-bottom: #{$key}px !important;
+    }
+    .pl-#{$key}{
+        padding-left: #{$key}px !important;
+    }
+    .pr-#{$key}{
+        padding-right: #{$key}px !important;
+    }
+}
+@each $key in (1, 2, 3){
+    .text-line-#{$key}{
+        @include text-line($key)
+    }
+}
+
+.nowrap{
+    white-space: nowrap;
+}
+.trim{
+    font-size: 0;
+    line-height: 0;
+}
+
+.flex{
+  display: flex;
+}
+.flex-y{
+    flex-direction: column;
+}
+.flex-x-sb{
+  justify-content: space-between;
+}
+.flex-x-center{
+  justify-content: center;
+}
+.flex-y-center{
+  align-items: center;
+}
+.flex-center{
+  align-items: center;
+  justify-content: center;
+}
+.flex-1{
+  flex: 1;
+}
+.flex-none{
+    flex: none !important;
+}
+.flex-wrap{
+    flex-wrap: wrap;
+}
+.yellow{
+  color: $color-yellow !important;
+}
+.blue{
+  color: $color-blue !important;
+}
+.gray{
+  color: $color-gray !important;
+}
+.green{
+    color: $color-green !important;
+}
+.red{
+    color: $color-red !important;
+}
+.orange{
+    color: $color-orange !important;
+}
+.dark{
+    color: $color-dark !important;
+}
+.black{
+    color: #000;
+}
+.bg-gray{
+  background-color: $color-gray;
+}
+.active{
+    color: $color-primary;
+}
+.full{
+    width: 100% !important;
+}
+.block-center{
+    margin: 0 auto;
+}
+.highlight{
+    color: $color-primary;
+}
+.icon-loading{
+    animation: rotate 1.5s infinite linear;
+    display: inline-block;
+}
+.relative{
+    position: relative;
+}
+.link{
+    cursor: pointer;
+    &:hover{
+        color: $color-primary;
+    }
+}
+
+.text-overflow{
+    position: relative;
+    &::after{
+        content: '...';
+        position: absolute;
+        bottom: 0; 
+        right: 0; 
+        padding-left: 40px;
+        background: linear-gradient(to right, transparent, #fff 55%);
+    }
+}
+
+.none-select{
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    -khtml-user-select: none;
+    user-select: none;
+}
+
+.disabled{
+    color: $color-disabled;
+}
+
+.white{
+    color: #fff;
+}
