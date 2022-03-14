@@ -1,83 +1,182 @@
 <template>
-    <div class="editor-page">
+    <div class="editor-page" :class="[`${theme}-theme`]">
         <div class="side-box">
-            <div class="catalogue-box">
+            <div class="side-hd p-10">
                 <div>
                     <el-upload
                     ref="upload"
                     action=""
-                    :on-change="changeFile"
+                    :on-change="openFile"
                     :show-file-list="false"
                     :auto-upload="false">
-                        <el-button slot="trigger" class="mb-10" type="primary" accept="*.txt">打开文件</el-button>
+                        <el-button size="small" slot="trigger" class="mb-10" type="primary" accept="*.txt">打开文件</el-button>
                     </el-upload>
                     
                 </div>
                 <div>
-                    <el-button type="success">打开文件夹</el-button>
+                    <el-button size="small" type="success">打开文件夹</el-button>
                 </div>
             </div>
             
 
-            <div class="catalogue-box" v-if="file.name">
-                <div v-if="file.name" class="file-item">
-                    {{file.name}}
+            <div class="side-body">
+                <div class="catalogue-box" v-if="myFiles.length>0">
+                    <div v-for="(item,index) in myFiles" :key="item.id" class="file-item" :class="{'is-on':item.id == currenFile.id}" >
+                        <span @click="clickFile(item)">{{item.name}}</span>
+                        <span class="el-icon-close" @click="removeFile(index)"></span>
+                    </div>
+                </div>
+
+                <div v-if="myFolder" class="catalogue-box">
+                    
+                    <div class="folder-title">
+                        <span>{{myFolder.name}}</span>
+                        <span class="el-icon-close" @click="removeFolder()"></span>
+                    </div>
+                    <div v-for="(item,index) in myFolder.files" :key="index" class="file-item" :class="{'is-on':item.id == currenFile.id}" >
+                        <span @click="clickFile2(item)">{{item.name}}</span>
+                    </div>
                 </div>
             </div>
 
-            <div v-if="folder.name" class="catalogue-box">
-                {{folder.name}}
-                <div v-for="(item,index) in folder.files" :key="index" class="file-item">
-                    {{item.name}}
+            <div class="side-fd">
+                <div class="p-10">
+                    <el-switch
+                    v-model="theme"
+                    active-value="light"
+                    inactive-value="dark"
+                    active-color="#ccc"
+                    inactive-color="#111"
+                    active-text=""
+                    inactive-text=""
+                    >
+                    </el-switch>
                 </div>
             </div>
         </div>
         <div class="main-box">
-            <editor :content="file.content"/>
+            <editor v-if="currenFile.id" v-model="currenFile.content"/>
+            <welcome v-else/>
+            {{currenFile.content}}
         </div>
     </div>
 </template>
 
 <script>
 import editor from './components/editor.vue'
+import welcome from './components/welcome.vue'
+import {mapState} from 'vuex'
     export default {
-        components: {editor},
+        components: {editor,welcome},
         data(){
             return {
-                folder: {
-                    name: '',
-                    files: []
-                },
-                file: {
-                    name: '',
-                    path: '',
-                    content: ''
-                }
+                theme: 'dark',
+                currenFile: {},
+
+                myFiles: [],
+                myFolder: null
+                // folder: { name: '',files: []}
             }
         },
+        computed: {
+            ...mapState('editor',['files','folder'])
+        },
+        mounted(){
+            console.log(this.files,this.folder)
+            this.myFiles = [...this.files]
+            this.myFolder = this.myFolder ? {...this.myFolder} : null
+        },
         methods: {
-            changeFile(file){
+            openFile(file){
                 // console.log(file)
                 let path = file.raw.path
-                this.$set(this.file,'name',file.name)
-                this.$set(this.file,'path',path)
-                this.openFile(path)
-            },
-            openFile(path){
-                let fs = require("fs");
 
+                this.readFile(path, content => {
+                    let data = {
+                        id: path,
+                        name: file.name,
+                        path: path,
+                        content: content
+                    }
+
+                    this.myFiles.push(data)
+
+                    this.$store.dispatch('editor/set_files', this.myFiles)
+
+                    this.clickFile(data)
+                })
+                
+                
+            },
+            readFile(path,cb){
+                this.$$showLoading()
+                console.log('open ',path)
+                let fs = require("fs");
                 fs.readFile(path, (err, data) => {
-                    if (err) return console.error(err);
+                    if (err) {
+                        this.$$hideLoading()
+                        return console.error(err);
+                    }
                     // console.log(data);
                     // console.log(data.toString());
-                    this.$set(this.file,'content',data.toString())
+                    cb(data.toString())
+                    this.$$hideLoading()
                 });
+            },
+            clickFile(file){
+                if(this.currenFile.id){
+                    let arr = this.files.map(item => {
+                        return {
+                            ...item,
+                            content: this.currenFile.content
+                        }
+                    })
+                    this.myFiles = arr
+                }
+                this.currenFile = {...file}
+            },
+            clickFile2(file){
+                if(this.currenFile.id){
+                    let arr = this.folder.files.map(item => {
+                        return {
+                            ...item,
+                            content: this.currenFile.content
+                        }
+                    })
+                    let data = {
+                        ...this.folder,
+                        files: arr
+                    }
+                    this.myFolder = data
+                }
+                this.currenFile = {...file}
+            },
+            removeFile(index){
+                this.myFiles.splice(index,1)
+                this.$store.dispatch('editor/set_files',this.myFiles)
+                if(this.myFiles[index]){
+                    if(this.myFiles[index].id === this.currenFile.id){
+                        this.currenFile = {}
+                    }
+                }
+            },
+            removeFolder(){
+                this.myFolder = null
+                this.$store.dispatch('editor/set_folders',null)
+
+                let index = this.myFiles.find(item => item.id === this.currenFile.id)
+                if(!index){
+                    this.currenFile = {}
+                }
             }
+
         }
     }
 </script>
 
 <style lang="scss">
+$dark-color: #222;
+$light-color: #f2f2f2;
 .editor-page{
     display: flex;
     width: 100%;
@@ -87,30 +186,92 @@ import editor from './components/editor.vue'
         flex: none;
         width: 200px;
         height: 100%;
-        overflow: auto;
-        background: #333;
-        color: #666;
+        overflow: hidden;
+        background: $dark-color;
+        color: #fff;
+        display: flex;
+        flex-direction: column;
+        .side-hd{
+            border-bottom: 1px solid lighten($dark-color, 10);
+            flex: none;
+        }
+        .side-body{
+            border-bottom: 1px solid lighten($dark-color, 10);
+            flex: 1;
+        }
+        .side-fd{
+            flex: none;
+        }
 
         .catalogue-box{
-            border-bottom: 1px solid #222;
-            padding: 10px;
+            border-bottom: 1px solid lighten($dark-color, 10);
+            padding: 5px;
             line-height: 1.5;
             font-size: 15px;
         }
         .file-item{
             cursor: pointer;
             padding: 10px;
-            &:hover{
-                background-color: #ccc;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1px;
+            &:hover,&.is-on{
+                background-color: lighten($dark-color, 10);
+            }
+            .el-icon-close:hover{
+                background-color: lighten($dark-color, 6);
             }
         }
 
+        
+
     }
+
+    .editor-box{
+        .editor-tools{
+            background: rgba(0,0,0,.2);
+        }
+        .editor-fd{
+            background: rgba(0,0,0,.2);
+        }
+    }
+
     .main-box{
         flex: 1;
         width: 100%;
         height: 100%;
+        background-color: darken($dark-color,1);
+        color: #fff;
     }
-    
+    &.light-theme{
+        .side-box{
+            background: $light-color;
+            color: #222;
+            .side-hd{
+                border-bottom: 1px solid darken($light-color, 20);
+            }
+            .side-body{
+                border-bottom: 1px solid darken($light-color, 20);
+            }
+            .catalogue-box{
+                border-bottom: 1px solid darken($light-color, 20);
+            }
+            .file-item{
+                &:hover,&.is-on{
+                    background-color: darken($light-color, 20);
+                }
+                .el-icon-close:hover{
+                    background-color: darken($light-color, 10);
+                }
+            }
+
+        }
+        .main-box{
+            background-color: darken($light-color,10);
+            color: #222;
+        }
+        
+    }
 }
 </style>

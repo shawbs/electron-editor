@@ -3,12 +3,14 @@ import Vuex from 'vuex'
 
 import { createPersistedState, createSharedMutations } from 'vuex-electron'
 
-import modules from './modules'
+import editor from './modules/editor'
 
 Vue.use(Vuex)
 
 export default new Vuex.Store({
-  modules,
+  modules:{
+    editor
+  },
   plugins: [
     createPersistedState(),
     createSharedMutations()

@@ -1,6 +1,6 @@
 const state = {
   files: [],
-  folders: []
+  folder: null
 }
 
 const mutations = {
@@ -13,9 +13,16 @@ const mutations = {
 }
 
 const actions = {
+  set_files({commit},data){
+    commit('set_files',data)
+  },
+  set_folders ({commit},data) {
+    commit('set_folders',data)
+  },
 }
 
 export default {
+  namespaced: true,
   state,
   mutations,
   actions

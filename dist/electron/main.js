@@ -105,7 +105,7 @@ eval("/* WEBPACK VAR INJECTION */(function(__dirname) {var resolve = __webpack_r
 /*! exports provided: _args, _development, _from, _id, _inBundle, _integrity, _location, _phantomChildren, _requested, _requiredBy, _resolved, _spec, _where, bin, bugs, description, homepage, keywords, license, main, name, repository, scripts, version, default */
 /***/ (function(module) {
 
-eval("module.exports = JSON.parse(\"{\\\"_args\\\":[[\\\"7zip@0.0.6\\\",\\\"F:\\\\\\\\code\\\\\\\\electron-editor\\\"]],\\\"_development\\\":true,\\\"_from\\\":\\\"7zip@0.0.6\\\",\\\"_id\\\":\\\"7zip@0.0.6\\\",\\\"_inBundle\\\":false,\\\"_integrity\\\":\\\"sha1-nK+xca+CMpSQNTtIFvAzR6oVCjA=\\\",\\\"_location\\\":\\\"/7zip\\\",\\\"_phantomChildren\\\":{},\\\"_requested\\\":{\\\"type\\\":\\\"version\\\",\\\"registry\\\":true,\\\"raw\\\":\\\"7zip@0.0.6\\\",\\\"name\\\":\\\"7zip\\\",\\\"escapedName\\\":\\\"7zip\\\",\\\"rawSpec\\\":\\\"0.0.6\\\",\\\"saveSpec\\\":null,\\\"fetchSpec\\\":\\\"0.0.6\\\"},\\\"_requiredBy\\\":[\\\"/electron-devtools-installer\\\"],\\\"_resolved\\\":\\\"https://registry.npmjs.org/7zip/-/7zip-0.0.6.tgz\\\",\\\"_spec\\\":\\\"0.0.6\\\",\\\"_where\\\":\\\"F:\\\\\\\\code\\\\\\\\electron-editor\\\",\\\"bin\\\":{\\\"7z\\\":\\\"7zip-lite/7z.exe\\\"},\\\"bugs\\\":{\\\"url\\\":\\\"https://github.com/fritx/win-7zip/issues\\\"},\\\"description\\\":\\\"7zip Windows Package via Node.js\\\",\\\"homepage\\\":\\\"https://github.com/fritx/win-7zip#readme\\\",\\\"keywords\\\":[\\\"7z\\\",\\\"7zip\\\",\\\"7-zip\\\",\\\"windows\\\",\\\"install\\\"],\\\"license\\\":\\\"GNU LGPL\\\",\\\"main\\\":\\\"index.js\\\",\\\"name\\\":\\\"7zip\\\",\\\"repository\\\":{\\\"type\\\":\\\"git\\\",\\\"url\\\":\\\"git+ssh://git@github.com/fritx/win-7zip.git\\\"},\\\"scripts\\\":{\\\"test\\\":\\\"mocha\\\"},\\\"version\\\":\\\"0.0.6\\\"}\");\n\n//# sourceURL=webpack:///./node_modules/7zip/package.json?");
+eval("module.exports = JSON.parse(\"{\\\"_args\\\":[[\\\"7zip@0.0.6\\\",\\\"D:\\\\\\\\demo\\\\\\\\golang\\\\\\\\electron-editor\\\"]],\\\"_development\\\":true,\\\"_from\\\":\\\"7zip@0.0.6\\\",\\\"_id\\\":\\\"7zip@0.0.6\\\",\\\"_inBundle\\\":false,\\\"_integrity\\\":\\\"sha1-nK+xca+CMpSQNTtIFvAzR6oVCjA=\\\",\\\"_location\\\":\\\"/7zip\\\",\\\"_phantomChildren\\\":{},\\\"_requested\\\":{\\\"type\\\":\\\"version\\\",\\\"registry\\\":true,\\\"raw\\\":\\\"7zip@0.0.6\\\",\\\"name\\\":\\\"7zip\\\",\\\"escapedName\\\":\\\"7zip\\\",\\\"rawSpec\\\":\\\"0.0.6\\\",\\\"saveSpec\\\":null,\\\"fetchSpec\\\":\\\"0.0.6\\\"},\\\"_requiredBy\\\":[\\\"/electron-devtools-installer\\\"],\\\"_resolved\\\":\\\"https://registry.npmjs.org/7zip/-/7zip-0.0.6.tgz\\\",\\\"_spec\\\":\\\"0.0.6\\\",\\\"_where\\\":\\\"D:\\\\\\\\demo\\\\\\\\golang\\\\\\\\electron-editor\\\",\\\"bin\\\":{\\\"7z\\\":\\\"7zip-lite/7z.exe\\\"},\\\"bugs\\\":{\\\"url\\\":\\\"https://github.com/fritx/win-7zip/issues\\\"},\\\"description\\\":\\\"7zip Windows Package via Node.js\\\",\\\"homepage\\\":\\\"https://github.com/fritx/win-7zip#readme\\\",\\\"keywords\\\":[\\\"7z\\\",\\\"7zip\\\",\\\"7-zip\\\",\\\"windows\\\",\\\"install\\\"],\\\"license\\\":\\\"GNU LGPL\\\",\\\"main\\\":\\\"index.js\\\",\\\"name\\\":\\\"7zip\\\",\\\"repository\\\":{\\\"type\\\":\\\"git\\\",\\\"url\\\":\\\"git+ssh://git@github.com/fritx/win-7zip.git\\\"},\\\"scripts\\\":{\\\"test\\\":\\\"mocha\\\"},\\\"version\\\":\\\"0.0.6\\\"}\");\n\n//# sourceURL=webpack:///./node_modules/7zip/package.json?");
 
 /***/ }),
 
@@ -526,18 +526,7 @@ eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var elec
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue */ \"vue\");\n/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(vue__WEBPACK_IMPORTED_MODULE_0__);\n/* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vuex */ \"vuex\");\n/* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(vuex__WEBPACK_IMPORTED_MODULE_1__);\n/* harmony import */ var vuex_electron__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! vuex-electron */ \"vuex-electron\");\n/* harmony import */ var vuex_electron__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(vuex_electron__WEBPACK_IMPORTED_MODULE_2__);\n/* harmony import */ var _modules__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./modules */ \"./src/renderer/store/modules/index.js\");\n\n\n\n\n\n\n\nvue__WEBPACK_IMPORTED_MODULE_0___default.a.use(vuex__WEBPACK_IMPORTED_MODULE_1___default.a);\n\n/* harmony default export */ __webpack_exports__[\"default\"] = (new vuex__WEBPACK_IMPORTED_MODULE_1___default.a.Store({\n  modules: _modules__WEBPACK_IMPORTED_MODULE_3__[\"default\"],\n  plugins: [Object(vuex_electron__WEBPACK_IMPORTED_MODULE_2__[\"createPersistedState\"])(), Object(vuex_electron__WEBPACK_IMPORTED_MODULE_2__[\"createSharedMutations\"])()],\n  strict: \"development\" !== 'production'\n}));\n\n//# sourceURL=webpack:///./src/renderer/store/index.js?");
-
-/***/ }),
-
-/***/ "./src/renderer/store/modules sync \\.js$":
-/*!************************************************************!*\
-  !*** ./src/renderer/store/modules sync nonrecursive \.js$ ***!
-  \************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-eval("var map = {\n\t\"./editor.js\": \"./src/renderer/store/modules/editor.js\",\n\t\"./index.js\": \"./src/renderer/store/modules/index.js\"\n};\n\n\nfunction webpackContext(req) {\n\tvar id = webpackContextResolve(req);\n\treturn __webpack_require__(id);\n}\nfunction webpackContextResolve(req) {\n\tif(!__webpack_require__.o(map, req)) {\n\t\tvar e = new Error(\"Cannot find module '\" + req + \"'\");\n\t\te.code = 'MODULE_NOT_FOUND';\n\t\tthrow e;\n\t}\n\treturn map[req];\n}\nwebpackContext.keys = function webpackContextKeys() {\n\treturn Object.keys(map);\n};\nwebpackContext.resolve = webpackContextResolve;\nmodule.exports = webpackContext;\nwebpackContext.id = \"./src/renderer/store/modules sync \\\\.js$\";\n\n//# sourceURL=webpack:///./src/renderer/store/modules_sync_nonrecursive_\\.js$?");
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue */ \"vue\");\n/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(vue__WEBPACK_IMPORTED_MODULE_0__);\n/* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vuex */ \"vuex\");\n/* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(vuex__WEBPACK_IMPORTED_MODULE_1__);\n/* harmony import */ var vuex_electron__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! vuex-electron */ \"vuex-electron\");\n/* harmony import */ var vuex_electron__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(vuex_electron__WEBPACK_IMPORTED_MODULE_2__);\n/* harmony import */ var _modules_editor__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./modules/editor */ \"./src/renderer/store/modules/editor.js\");\n\n\n\n\n\n\n\nvue__WEBPACK_IMPORTED_MODULE_0___default.a.use(vuex__WEBPACK_IMPORTED_MODULE_1___default.a);\n\n/* harmony default export */ __webpack_exports__[\"default\"] = (new vuex__WEBPACK_IMPORTED_MODULE_1___default.a.Store({\n  modules: {\n    editor: _modules_editor__WEBPACK_IMPORTED_MODULE_3__[\"default\"]\n  },\n  plugins: [Object(vuex_electron__WEBPACK_IMPORTED_MODULE_2__[\"createPersistedState\"])(), Object(vuex_electron__WEBPACK_IMPORTED_MODULE_2__[\"createSharedMutations\"])()],\n  strict: \"development\" !== 'production'\n}));\n\n//# sourceURL=webpack:///./src/renderer/store/index.js?");
 
 /***/ }),
 
@@ -549,19 +538,7 @@ eval("var map = {\n\t\"./editor.js\": \"./src/renderer/store/modules/editor.js\"
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-eval("__webpack_require__.r(__webpack_exports__);\nvar state = {\n  files: [],\n  folders: []\n};\n\nvar mutations = {\n  set_files: function set_files(state, data) {\n    state.files = data;\n  },\n  set_folders: function set_folders(state, data) {\n    state.folders = data;\n  }\n};\n\nvar actions = {};\n\n/* harmony default export */ __webpack_exports__[\"default\"] = ({\n  state: state,\n  mutations: mutations,\n  actions: actions\n});\n\n//# sourceURL=webpack:///./src/renderer/store/modules/editor.js?");
-
-/***/ }),
-
-/***/ "./src/renderer/store/modules/index.js":
-/*!*********************************************!*\
-  !*** ./src/renderer/store/modules/index.js ***!
-  \*********************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n\n\nvar files = __webpack_require__(\"./src/renderer/store/modules sync \\\\.js$\");\nvar modules = {};\n\nfiles.keys().forEach(function (key) {\n  if (key === './index.js') return;\n  modules[key.replace(/(\\.\\/|\\.js)/g, '')] = files(key).default;\n});\n\n/* harmony default export */ __webpack_exports__[\"default\"] = (modules);\n\n//# sourceURL=webpack:///./src/renderer/store/modules/index.js?");
+eval("__webpack_require__.r(__webpack_exports__);\nvar state = {\n  files: [],\n  folder: null\n};\n\nvar mutations = {\n  set_files: function set_files(state, data) {\n    state.files = data;\n  },\n  set_folders: function set_folders(state, data) {\n    state.folders = data;\n  }\n};\n\nvar actions = {\n  set_files: function set_files(_ref, data) {\n    var commit = _ref.commit;\n\n    commit('set_files', data);\n  },\n  set_folders: function set_folders(_ref2, data) {\n    var commit = _ref2.commit;\n\n    commit('set_folders', data);\n  }\n};\n\n/* harmony default export */ __webpack_exports__[\"default\"] = ({\n  namespaced: true,\n  state: state,\n  mutations: mutations,\n  actions: actions\n});\n\n//# sourceURL=webpack:///./src/renderer/store/modules/editor.js?");
 
 /***/ }),
 
@@ -572,7 +549,7 @@ eval("__webpack_require__.r(__webpack_exports__);\n\n\nvar files = __webpack_req
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-eval("__webpack_require__(/*! F:\\code\\electron-editor\\src\\main\\index.dev.js */\"./src/main/index.dev.js\");\nmodule.exports = __webpack_require__(/*! F:\\code\\electron-editor\\src\\main\\index.js */\"./src/main/index.js\");\n\n\n//# sourceURL=webpack:///multi_./src/main/index.dev.js_./src/main/index.js?");
+eval("__webpack_require__(/*! D:\\demo\\golang\\electron-editor\\src\\main\\index.dev.js */\"./src/main/index.dev.js\");\nmodule.exports = __webpack_require__(/*! D:\\demo\\golang\\electron-editor\\src\\main\\index.js */\"./src/main/index.js\");\n\n\n//# sourceURL=webpack:///multi_./src/main/index.dev.js_./src/main/index.js?");
 
 /***/ }),
 
