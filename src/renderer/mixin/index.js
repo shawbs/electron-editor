@@ -16,5 +16,17 @@ export default {
         $$hideLoading() {
             this.myLoadingInstance && this.myLoadingInstance.close()
         },
+        $$success(message) {
+            return this.$message({
+                message,
+                type: 'success'
+            })
+        },
+        $$error(message) {
+            return this.$message({
+                message,
+                type: 'error'
+            })
+        },
     }
 }

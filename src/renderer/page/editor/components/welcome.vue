@@ -1,6 +1,6 @@
 <template>
     <div class="home-page">
-        <div class="fs-big mb-10">欢迎使用！</div>
+        <div class="fs-big mb-10">欢迎使用TXT小说编辑器！</div>
     </div>
 </template>
 

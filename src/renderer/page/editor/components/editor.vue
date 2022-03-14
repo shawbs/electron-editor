@@ -3,7 +3,7 @@
         <div class="editor-tools">
             <el-button size="mini" @click="formatTxt">一键格式化</el-button>
         </div>
-        <div class="editor-body" contenteditable="true" v-html="content" @blur="changeHandle">
+        <div ref="input" class="editor-body" contenteditable="true" v-html="content" @blur="blurHandle" @input="changeHandle">
             <!-- <div v-for="item in 100">123</div> -->
         </div>
         <div class="editor-fd">
@@ -34,23 +34,37 @@
         },
         mounted(){
             this.content = this.value
+
+            window.addEventListener('keyup', e => {
+                // console.log(e)
+                if(e.ctrlKey && e.key === 's'){
+                    // console.log('ctrl+s')
+                    if(this.$refs.input){
+                        this.$emit('save', this.$refs.input.innerText)
+                    }
+                    
+                }
+            }, true)
         },
         methods: {
             formatTxt(){
                 // console.log(this.content)
                 this.content = this.test(this.content)
                 this.$emit('input',this.content)
+                this.$emit('change')
             }, 
 
             trim(str){
                 return str.replace(/^\s+|\s+$/g,'')
             },
 
-            changeHandle(e){
+            blurHandle(e){
                 // console.log(1,e.target.innerText)
                 let str = e.target.innerText
-                // console.log(str)
-                this.$emit('input',str)
+                this.$emit('input',str)  
+            },
+            changeHandle(){
+                this.$emit('change')  
             },
 
             test(text){
@@ -95,6 +109,7 @@
         line-height: 1.8;
         font-size: 15px;
         white-space: pre-wrap;
+        letter-spacing: 2px;
     }
     .editor-fd{
         flex: none;
