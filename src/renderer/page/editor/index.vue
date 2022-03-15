@@ -5,17 +5,8 @@
             <div class="drag-btn" @mousedown="onmousedown" ></div>
 
             <div class="side-hd p-10">
-                <div>
-                    <!-- <el-upload
-                    ref="upload"
-                    action=""
-                    :on-change="openFile"
-                    :show-file-list="false"
-                    :auto-upload="false">
-                        <el-button size="small" slot="trigger" class="mb-10" type="primary" accept="*.txt">打开文件</el-button>
-                    </el-upload> -->
+                <div class="mb-10">
 
-                    
                     <el-button size="small" type="primary" @click="openFile">打开文件</el-button>
 
                     <el-button size="small" type="success" @click="openFolder">打开文件夹</el-button>
@@ -112,6 +103,8 @@ const Fs = require("fs");
                 width: 300,
                 theme: 'light', // dark light
                 currenFile: {},
+                
+                paths: [],
 
                 myFiles: [], 
                 myFolder: null, // folder: { name: '',files: []}
@@ -125,19 +118,19 @@ const Fs = require("fs");
         },
         mounted(){
             console.log(this.files,this.folder)
-            this.myFiles = [...this.files]
+            if(this.files){
+                this.initFiles()
+            }
             if(this.folder){
                 this.initFolder(this.folder)
-            }
-
-            ipcRenderer.on('selectedItem', (event, files)=>{
-
-                console.log(files);//输出选择的文件
-            })
-
-            
+            } 
         },
         methods: {
+            initFiles(){
+                this.files.forEach(item => {
+                    this.openPath(item)
+                })
+            },
             closeAll(){
                 this.$store.dispatch('editor/set_files',[])
                 this.$store.dispatch('editor/set_folder','')
@@ -190,7 +183,7 @@ const Fs = require("fs");
                     this.draging = false
                 }
             },
-            openFile2(path){
+            openPath(path,cb){
                 let type = Path.extname(path)
 
                 if(type != '.txt'){
@@ -221,9 +214,13 @@ const Fs = require("fs");
                         this.myFiles.push(data)
                     }
                     
-                    this.clickFile(data)
+                    
 
-                    this.$store.dispatch('editor/set_files', this.myFiles)
+                    this.paths.push(path)
+                    
+                    this.$store.dispatch('editor/set_files', this.paths)
+
+                    cb && cb(data)
                 })
                 
                 
@@ -245,7 +242,9 @@ const Fs = require("fs");
                     console.log(res)
                     if(res){
                         let path = res[0]
-                        this.openFile2(path)
+                        this.openPath(path, e=> {
+                            this.clickFile(e)
+                        })
                     }
                 })
             },
@@ -276,7 +275,8 @@ const Fs = require("fs");
                 })
             },
             readDir(pathName,cb){
-                console.log('open ',pathName)
+                console.log('open dir',pathName)
+                this.$$showLoading()
                 Fs.readdir(pathName,{ withFileTypes: true }, (err, data) => {
                     if (err) {
                         this.$$hideLoading()
@@ -330,11 +330,6 @@ const Fs = require("fs");
                 // this.setChangeStatus(false)
                 this.$$showLoading()
                 
-                // console.log(this.currenFile)
-
-                if(this.currenFile.type === 1){
-                    this.$store.dispatch('editor/set_files',this.myFiles)
-                }
 
                 Fs.writeFile(this.currenFile.path,content, (err) => {
                     if (err) {
@@ -375,7 +370,9 @@ const Fs = require("fs");
             },
             removeFile(index){
                 this.myFiles.splice(index,1)
-                this.$store.dispatch('editor/set_files',this.myFiles)
+                this.paths.splice(index,1)
+
+                this.$store.dispatch('editor/set_files',this.paths)
                 if(this.myFiles[index]){
                     if(this.myFiles[index].id === this.currenFile.id){
                         this.currenFile = {}

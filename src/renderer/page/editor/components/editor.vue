@@ -62,7 +62,7 @@
                 this.$emit('change',content)
                 this.$emit('changestatus',true)  
 
-                this.autoEmitSave()
+
             }, 
 
             trim(str){
@@ -73,7 +73,7 @@
                 // console.log(1,e.target.innerText)
                 let str = e.target.innerText
                 this.$emit('change',str)
-                this.autoEmitSave()
+
             },
             changeHandle(){
                 this.$emit('changestatus',true)  
