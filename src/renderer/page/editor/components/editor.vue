@@ -1,7 +1,7 @@
 <template>
     <div class="editor-box" v-if="file">
         <div class="editor-tools">
-            <el-button size="mini" @click="formatTxt">一键格式化</el-button>
+            <el-button type="primary" size="mini" @click="formatTxt">一键排版</el-button>
         </div>
         <div class="editor-path">
             {{file.path}}

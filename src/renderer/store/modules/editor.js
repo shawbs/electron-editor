@@ -1,4 +1,5 @@
 const state = {
+  appName: '扑街编辑器',
   theme: '',
   files: [],
   folder: ''

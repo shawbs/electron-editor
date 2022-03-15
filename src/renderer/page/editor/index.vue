@@ -253,6 +253,9 @@ const Fs = require("fs");
             },
             openFile(){
                 remote.dialog.showOpenDialog({
+                    filters: [
+                        { name: '文本', extensions: ['txt', 'TXT'] },
+                    ],
                     properties: ['openFile'],
                 }, res => {
                     console.log(res)
@@ -265,6 +268,7 @@ const Fs = require("fs");
                 })
             },
             initFolder(pathName){
+                // console.log(pathName)
                 let folderName = Path.parse(pathName).name
                 this.readDir(pathName, files => {
                     let arr = files.map(item => {
@@ -299,7 +303,7 @@ const Fs = require("fs");
                         return console.error(err);
                     }
                     this.$$hideLoading()
-                    console.log(data)
+                    // console.log(data)
 
                     //过滤非.txt文件
                     let arr = data.filter(item => {
@@ -308,7 +312,7 @@ const Fs = require("fs");
                         return str === '.txt'
                     })
 
-                    cb && cb(data)
+                    cb && cb(arr)
                 });
             },
             changeHandle(content){
