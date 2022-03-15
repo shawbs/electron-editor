@@ -2,6 +2,8 @@
 
 process.env.NODE_ENV = 'production'
 
+const Multispinner = require('multispinner')
+
 const { say } = require('cfonts')
 const chalk = require('chalk')
 const del = require('del')
@@ -34,8 +36,8 @@ async function build () {
 
   del.sync(['dist/electron/*', '!.gitkeep'])
 
-  const tasks = ['main', 'renderer']
-  const m = new Multispinner(tasks, {
+  const tasks2 = ['main', 'renderer']
+  const m = new Multispinner(tasks2, {
     preText: 'building',
     postText: 'process'
   })
