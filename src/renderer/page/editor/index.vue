@@ -1,20 +1,20 @@
 <template>
-    <div class="editor-page" :class="[`${theme}-theme`]" >
+    <div class="editor-page" :class="[`${myTheme}-theme`]" >
         <div class="drag-mask" v-if="draging" @mouseup="onmouseup" @mousemove="onmousemove"></div>
         <div class="side-box" :style="{width:width + 'px'}">
             <div class="drag-btn" @mousedown="onmousedown" ></div>
 
             <div class="side-hd p-10">
-                <div class="mb-10">
+                <div>
 
                     <el-button size="small" type="primary" @click="openFile">打开文件</el-button>
 
                     <el-button size="small" type="success" @click="openFolder">打开文件夹</el-button>
                     
                 </div>
-                <div>
-                    <el-button size="small" type="success" @click="saveAll">保存所有</el-button>
-                    <el-button size="small" type="danger" @click="closeAll">关闭所有</el-button>
+                <div v-if="myFiles.length || myFolder" class="mt-10">
+                    <el-button size="small" type="info" @click="saveAll" >保存全部</el-button>
+                    <el-button size="small" type="danger" @click="closeAll" >关闭全部</el-button>
                     
                 </div>
             </div>
@@ -64,7 +64,7 @@
             <div class="side-fd">
                 <div class="p-10">
                     <el-switch
-                    v-model="theme"
+                    v-model="myTheme"
                     active-value="light"
                     inactive-value="dark"
                     active-color="#ccc"
@@ -78,7 +78,7 @@
         </div>
         <div class="main-box">
             <!-- {{draging}}{{width}} -->
-            <editor v-if="currenFile.id" :data="currenFile" @changestatus="changestatus" @change="changeHandle" @save="saveFile"/>
+            <editor v-if="currenFile.id" :data="currenFile" @changestatus="changestatus" @change="changeHandle" @save="saveFile" @close="closeHandle"/>
             <welcome v-else/>
             {{currenFile.content}}
         </div>
@@ -101,7 +101,7 @@ const Fs = require("fs");
                 draging: false,
 
                 width: 300,
-                theme: 'light', // dark light
+                myTheme: '', // dark light
                 currenFile: {},
                 
                 paths: [],
@@ -114,10 +114,17 @@ const Fs = require("fs");
             }
         },
         computed: {
-            ...mapState('editor',['files','folder'])
+            ...mapState('editor',['theme','files','folder'])
+        },
+        watch: {
+            myTheme(val){
+                this.$store.dispatch('editor/set_theme',val)
+            }
         },
         mounted(){
             console.log(this.files,this.folder)
+
+            this.myTheme = this.theme || 'light'
             if(this.files){
                 this.initFiles()
             }
@@ -131,9 +138,18 @@ const Fs = require("fs");
                     this.openPath(item)
                 })
             },
+            closeHandle(){
+                this.currenFile = {}
+            },
             closeAll(){
-                this.$store.dispatch('editor/set_files',[])
-                this.$store.dispatch('editor/set_folder','')
+                this.currenFile = {}
+                this.myFiles = []
+                this.myFolder = null
+                
+                setTimeout(() => {
+                    this.$store.dispatch('editor/set_files',[])
+                    this.$store.dispatch('editor/set_folder','')
+                })
             },
             contextmenu(e,data,index){
                 console.log(e,data,e.x,e.y)

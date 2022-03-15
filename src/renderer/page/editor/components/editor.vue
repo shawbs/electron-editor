@@ -5,6 +5,7 @@
         </div>
         <div class="editor-path">
             {{file.path}}
+            <el-button type="text" class="ml-10" @click="closeHandle">关闭</el-button>
         </div>
         <div ref="input" class="editor-body" contenteditable="true" v-html="content" @input="changeHandle" @blur="blurHandle">
             <!-- <div v-for="item in 100">123</div> -->
@@ -46,15 +47,24 @@
                 // console.log(e)
                 if(e.ctrlKey && e.key === 's'){
                     console.log('ctrl+s')
-                    if(this.$refs.input){
-                        let str = this.$refs.input.innerText
-                        this.$emit('save', str)
-                    }
+                    this.saveHandle()
                     
                 }
             }, true)
         },
         methods: {
+
+            saveHandle(){
+                if(this.$refs.input){
+                    let str = this.$refs.input.innerText
+                    this.$emit('save', str)
+                }
+            },
+
+            closeHandle(){
+                this.saveHandle()
+                this.$emit('close')
+            },
 
             formatTxt(){
                 // console.log(this.content)
@@ -109,7 +119,7 @@
     .editor-path{
         background: rgba(0,0,0,.1);
         flex: none;
-        padding: 10px;
+        padding: 0 10px;
     }
     .editor-tools{
         flex: none;

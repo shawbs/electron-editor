@@ -1,9 +1,13 @@
 const state = {
+  theme: '',
   files: [],
   folder: ''
 }
 
 const mutations = {
+  set_theme(state,data){
+    state.theme = data
+  },
   set_files (state,data) {
     state.files = data
   },
@@ -13,6 +17,9 @@ const mutations = {
 }
 
 const actions = {
+  set_theme({commit},data){
+    commit('set_theme',data)
+  },
   set_files({commit},data){
     commit('set_files',data)
   },
