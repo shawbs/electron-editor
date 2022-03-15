@@ -55,11 +55,14 @@
             }, true)
         },
         methods: {
+
             formatTxt(){
                 // console.log(this.content)
                 let content = this.test(this.content)
                 this.$emit('change',content)
                 this.$emit('changestatus',true)  
+
+                this.autoEmitSave()
             }, 
 
             trim(str){
@@ -69,7 +72,8 @@
             blurHandle(e){
                 // console.log(1,e.target.innerText)
                 let str = e.target.innerText
-                this.$emit('change',str)  
+                this.$emit('change',str)
+                this.autoEmitSave()
             },
             changeHandle(){
                 this.$emit('changestatus',true)  

@@ -6,18 +6,23 @@
 
             <div class="side-hd p-10">
                 <div>
-                    <el-upload
+                    <!-- <el-upload
                     ref="upload"
                     action=""
                     :on-change="openFile"
                     :show-file-list="false"
                     :auto-upload="false">
                         <el-button size="small" slot="trigger" class="mb-10" type="primary" accept="*.txt">打开文件</el-button>
-                    </el-upload>
+                    </el-upload> -->
+
+                    
+                    <el-button size="small" type="primary" @click="openFile">打开文件</el-button>
+
+                    <el-button size="small" type="success" @click="openFolder">打开文件夹</el-button>
                     
                 </div>
                 <div>
-                    <el-button size="small" type="success" @click="openFolder">打开文件夹</el-button>
+                    <el-button size="small" type="success" @click="saveAll">保存所有</el-button>
                     <el-button size="small" type="danger" @click="closeAll">关闭所有</el-button>
                     
                 </div>
@@ -185,20 +190,23 @@ const Fs = require("fs");
                     this.draging = false
                 }
             },
-            openFile(file){
-                if(file.raw.type != 'text/plain'){
+            openFile2(path){
+                let type = Path.extname(path)
+
+                if(type != '.txt'){
                     return this.$$error("仅支持txt格式")
                 }
+
+                let name = Path.basename(path)
+                let name2 = name.substring(0,name.lastIndexOf('.txt'))
                 
-                console.log(file)
-                let path = file.raw.path
 
                 this.readFile(path, content => {
-                    let name = file.name.substring(0,file.name.lastIndexOf('.txt'))
+                    
                     let data = {
                         id: path,
-                        filename: file.name,
-                        name: name,
+                        filename: name,
+                        name: name2,
                         path: path,
                         content: content,
                         isChange:false,
@@ -227,6 +235,17 @@ const Fs = require("fs");
                     console.log(res)
                     if(res){
                         this.initFolder(res[0])
+                    }
+                })
+            },
+            openFile(){
+                remote.dialog.showOpenDialog({
+                    properties: ['openFile'],
+                }, res => {
+                    console.log(res)
+                    if(res){
+                        let path = res[0]
+                        this.openFile2(path)
                     }
                 })
             },
@@ -429,6 +448,40 @@ const Fs = require("fs");
             },
             cancleRename(data){
                 data.renameing=false
+            },
+
+            saveAll(){
+                this.myFiles.forEach(item => {
+                    console.log('save ',item.path)
+                    item.isChange = false
+                    this.$$showLoading()
+                    Fs.writeFile(item.path,item.content, (err) => {
+                        if (err) {
+                            this.$$hideLoading()
+                            return console.error(err);
+                        }
+                        this.$$hideLoading()
+                        
+                        console.log('save end')
+                    });
+                })
+
+                if(this.myFolder && this.myFolder.path){
+                    this.myFolder.files.forEach(item => {
+                        console.log('save ',item.path)
+                        item.isChange = false
+                        this.$$showLoading()
+                        Fs.writeFile(item.path,item.content, (err) => {
+                            if (err) {
+                                this.$$hideLoading()
+                                return console.error(err);
+                            }
+                            this.$$hideLoading()
+                            
+                            console.log('save end')
+                        });
+                    })
+                }
             }
 
         }
