@@ -1,6 +1,13 @@
-# electron-editor
+# 扑街编辑器（txt小说编辑器）
 
-> An electron-vue project
+> 基于 electron-vue 开发
+
+### [window包](./example/win-unpacked.rar)
+
+
+### 预览
+
+![avatar](./example/1.png)
 
 #### Build Setup
 
@@ -22,4 +29,3 @@ npm test
 
 ---
 
-This project was generated with [electron-vue](https://github.com/SimulatedGREG/electron-vue)@[8d4ed60](https://github.com/SimulatedGREG/electron-vue/tree/8d4ed607d65300381a8f47d97923eb07832b1a9a) using [vue-cli](https://github.com/vuejs/vue-cli). Documentation about the original structure can be found [here](https://simulatedgreg.gitbooks.io/electron-vue/content/index.html).
