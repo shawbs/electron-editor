@@ -1,6 +1,9 @@
 <template>
-    <div class="editor-page" :class="[`${theme}-theme`]">
-        <div class="side-box">
+    <div class="editor-page" :class="[`${theme}-theme`]" >
+        <div class="drag-mask" v-if="draging" @mouseup="onmouseup" @mousemove="onmousemove"></div>
+        <div class="side-box" :style="{width:width + 'px'}">
+            <div class="drag-btn" @mousedown="onmousedown" ></div>
+
             <div class="side-hd p-10">
                 <div>
                     <el-upload
@@ -59,6 +62,7 @@
             </div>
         </div>
         <div class="main-box">
+            <!-- {{draging}}{{width}} -->
             <editor v-if="currenFile.id" :data="currenFile" @changestatus="changestatus" @change="changeHandle" @save="saveFile"/>
             <welcome v-else/>
             {{currenFile.content}}
@@ -71,11 +75,15 @@ import editor from './components/editor.vue'
 import welcome from './components/welcome.vue'
 import {remote   } from 'electron'
 import {mapState} from 'vuex'
+var dragtime
     export default {
         components: {editor,welcome},
         data(){
             return {
-                theme: 'dark',
+                draging: false,
+
+                width: 300,
+                theme: 'light', // dark light
                 currenFile: {},
 
                 myFiles: [],
@@ -95,8 +103,27 @@ import {mapState} from 'vuex'
 
                 console.log(files);//输出选择的文件
             })
+
         },
         methods: {
+            onmousedown(e){
+                // console.log('down',e)
+                this.draging = true
+            },
+            onmousemove(e){
+                if(this.draging){
+                    // console.log('move',e.clientX)
+                    if(e.clientX < 500 && e.clientX > 200){
+                        this.width = e.clientX
+                    }
+                }
+            },
+            onmouseup(e){
+                if(this.draging){
+                    // console.log('up',e)
+                    this.draging = false
+                }
+            },
             openFile(file){
                 if(file.raw.type != 'text/plain'){
                     return this.$$error("仅支持txt格式")
@@ -283,6 +310,15 @@ import {mapState} from 'vuex'
 <style lang="scss">
 $dark-color: #222;
 $light-color: #f2f2f2;
+.drag-mask{
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 10;
+    cursor: col-resize;
+}
 .editor-page{
     display: flex;
     width: 100%;
@@ -297,6 +333,21 @@ $light-color: #f2f2f2;
         color: #fff;
         display: flex;
         flex-direction: column;
+        transition: width .1s linear;
+
+        position: relative;
+        .drag-btn{
+            position: absolute;
+            top: 0;
+            right: 0;
+            height: 100%;
+            width: 5px;
+            z-index: 2;
+            background: rgba(0,0,0,.2);
+            // -webkit-app-region: drag;
+            cursor: col-resize;
+        }
+
         .side-hd{
             border-bottom: 1px solid lighten($dark-color, 10);
             flex: none;
@@ -376,6 +427,7 @@ $light-color: #f2f2f2;
         height: 100%;
         background-color: darken($dark-color,1);
         color: #fff;
+        
     }
     &.light-theme{
         .side-box{

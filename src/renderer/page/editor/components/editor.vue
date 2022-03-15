@@ -3,7 +3,7 @@
         <div class="editor-tools">
             <el-button size="mini" @click="formatTxt">一键格式化</el-button>
         </div>
-        <div class="editor-tools">
+        <div class="editor-path">
             {{file.path}}
         </div>
         <div ref="input" class="editor-body" contenteditable="true" v-html="content" @input="changeHandle" @blur="blurHandle">
@@ -102,6 +102,11 @@
     height: 100%;
     display: flex;
     flex-direction: column;
+    .editor-path{
+        background: rgba(0,0,0,.1);
+        flex: none;
+        padding: 10px;
+    }
     .editor-tools{
         flex: none;
         padding: 10px;
