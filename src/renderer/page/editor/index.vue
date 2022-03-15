@@ -29,7 +29,7 @@
                     </div>
                 </div>
 
-                <div v-if="myFolder" class="catalogue-box">
+                <div v-if="myFolder" class="folder-box">
                     
                     <div class="folder-title">
                         <span>{{myFolder.name}}</span>
@@ -59,7 +59,7 @@
             </div>
         </div>
         <div class="main-box">
-            <editor v-if="currenFile.id" v-model="currenFile.content" @change="changeHandle" @save="saveFile"/>
+            <editor v-if="currenFile.id" :data="currenFile" @changestatus="changestatus" @change="changeHandle" @save="saveFile"/>
             <welcome v-else/>
             {{currenFile.content}}
         </div>
@@ -89,7 +89,7 @@ import {mapState} from 'vuex'
         mounted(){
             console.log(this.files,this.folder)
             this.myFiles = [...this.files]
-            this.myFolder = this.myFolder ? {...this.myFolder} : null
+            this.myFolder = this.folder ? {...this.folder} : null
 
             ipcRenderer.on('selectedItem', (event, files)=>{
 
@@ -111,7 +111,8 @@ import {mapState} from 'vuex'
                         name: file.name,
                         path: path,
                         content: content,
-                        isChange:false
+                        isChange:false,
+                        type: 1 //1单独文件 2目录文件
                     }
 
                     let index = this.myFiles.findIndex(item => item.id == data.id)
@@ -135,25 +136,28 @@ import {mapState} from 'vuex'
                     console.log(res)
                     if(res){
                         let pathName = res[0]
+                        let path = require('path')
+
+                        let folderName = path.parse(pathName).name
                         this.readDir(pathName, files => {
-                            let path = require('path')
-                            
+
                             let arr = files.map(item => {
                                 return {
-                                    'id': path.join(item),
+                                    'id': path.join(pathName,item),
                                     'name': item,
-                                    'path': path.join(item),
+                                    'path': path.join(pathName,item),
                                     'content': '',
-                                    'isChange':false
+                                    'isChange':false,
+                                    'type': 2
                                 }
                             })
-                            console.log(files)
+                            // console.log(files)
                             this.myFolder = {
-                                name: pathName,
+                                name: folderName,
                                 files: arr
                             }
 
-                            this.$store.dispatch('editor/set_folders', this.myFolder)
+                            this.$store.dispatch('editor/set_folder', this.myFolder)
                         })
                     }
                 })
@@ -161,17 +165,21 @@ import {mapState} from 'vuex'
             readDir(pathName,cb){
                 console.log('open ',pathName)
                 let fs = require("fs");
-                fs.readdir(pathName, (err, data) => {
+                fs.readdir(pathName,{ withFileTypes: true }, (err, data) => {
                     if (err) {
                         this.$$hideLoading()
                         return console.error(err);
                     }
                     this.$$hideLoading()
+                    // console.log(data)
                     cb && cb(data)
                 });
             },
-            changeHandle(){
-                this.setChangeStatus(true)
+            changeHandle(content){
+                this.$set(this.currenFile,'content',content)
+            },
+            changestatus(){
+                this.$set(this.currenFile,'isChange', true)
             },
             setChangeStatus(isChange){
                 this.myFiles = this.myFiles.map(item => {
@@ -197,10 +205,20 @@ import {mapState} from 'vuex'
                 });
             },
             saveFile(content){
-                this.setChangeStatus(false)
+                this.$set(this.currenFile,'content',content)
+                this.$set(this.currenFile,'isChange', false)
+                // this.setChangeStatus(false)
                 this.$$showLoading()
                 console.log('save ',this.currenFile.path)
-                // console.log('save ',content)
+                // console.log(this.currenFile)
+
+                if(this.currenFile.type === 1){
+                    this.$store.dispatch('editor/set_files',this.myFiles)
+                }
+                if(this.currenFile.type === 2){
+                    this.$store.dispatch('editor/set_folder',this.myFolder)
+                }
+
                 let fs = require("fs");
                 fs.writeFile(this.currenFile.path,content, (err) => {
                     if (err) {
@@ -213,37 +231,29 @@ import {mapState} from 'vuex'
                 });
             },
             clickFile(file){
-                if(this.currenFile.id){
-                    let arr = this.files.map(item => {
-                        return {
-                            ...item,
-                            content: this.currenFile.content
-                        }
-                    })
-                    this.myFiles = arr
+                if(file.name.indexOf('.txt') === -1){
+                    return this.$$error("格式不支持")
                 }
-                this.currenFile = file
+
+                if(file.isChange){
+                    this.currenFile = file
+                }else{
+                    this.readFile(file.path, res => {
+                        file.content = res
+                        this.currenFile = file
+                    })
+                }
             },
             clickFile2(file){
-                
-                this.currenFile = file
-
-                if(this.currenFile.id){
-                    let arr = this.folder.files.map(item => {
-                        return {
-                            ...item,
-                            content: this.currenFile.content
-                        }
-                    })
-                    let data = {
-                        ...this.folder,
-                        files: arr
-                    }
-                    this.myFolder = data
+                if(file.name.indexOf('.txt') === -1){
+                    return this.$$error("格式不支持")
                 }
-                if(file.content && file.path.indexOf('txt') > -1){
-                    this.readFile(file.path, e => {
-                        this.$set(this.currenFile,'content',e)
+                if(file.isChange){
+                    this.currenFile = file
+                }else{
+                    this.readFile(file.path, res => {
+                        file.content = res
+                        this.currenFile = file
                     })
                 }
             },
@@ -258,7 +268,7 @@ import {mapState} from 'vuex'
             },
             removeFolder(){
                 this.myFolder = null
-                this.$store.dispatch('editor/set_folders',null)
+                this.$store.dispatch('editor/set_folder',null)
 
                 let index = this.myFiles.find(item => item.id === this.currenFile.id)
                 if(!index){
@@ -304,6 +314,26 @@ $light-color: #f2f2f2;
             padding: 5px;
             line-height: 1.5;
             font-size: 15px;
+        }
+        .folder-box{
+            border-bottom: 1px solid lighten($dark-color, 10);
+            padding: 5px;
+            line-height: 1.5;
+            font-size: 15px;
+            .folder-title{
+                cursor: pointer;
+                padding: 10px;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 1px;
+                .el-icon-close:hover{
+                    background-color: lighten($dark-color, 6);
+                }
+            }
+            .file-item{
+                padding-left: 25px;
+            }
         }
         .file-item{
             cursor: pointer;
@@ -359,6 +389,9 @@ $light-color: #f2f2f2;
             }
             .catalogue-box{
                 border-bottom: 1px solid darken($light-color, 20);
+            }
+            .folder-box{
+                border-bottom: 1px solid darken($light-color, 10);
             }
             .file-item{
                 .icon-change{

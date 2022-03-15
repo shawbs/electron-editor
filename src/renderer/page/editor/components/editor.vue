@@ -1,9 +1,12 @@
 <template>
-    <div class="editor-box">
+    <div class="editor-box" v-if="file">
         <div class="editor-tools">
             <el-button size="mini" @click="formatTxt">一键格式化</el-button>
         </div>
-        <div ref="input" class="editor-body" contenteditable="true" v-html="content" @blur="blurHandle" @input="changeHandle">
+        <div class="editor-tools">
+            {{file.path}}
+        </div>
+        <div ref="input" class="editor-body" contenteditable="true" v-html="content" @input="changeHandle" @blur="blurHandle">
             <!-- <div v-for="item in 100">123</div> -->
         </div>
         <div class="editor-fd">
@@ -15,32 +18,37 @@
 <script>
     export default {
         props: {
-            value: String
+            data: Object
         },
         data(){
             return {
-                content: ''
+                file: null
             }
         },
         computed:{
+            
+            content(){
+                return this.file ? this.file.content : ''
+            },
             size(){
                 return this.content ? this.content.replace(/\s+/g,'').length : 0
-            }
+            },
         },
         watch: {
-            value(){
-                this.content = this.value
+            data(){
+                this.file = this.data
             }
         },
         mounted(){
-            this.content = this.value
+            this.file = this.data
 
             window.addEventListener('keyup', e => {
                 // console.log(e)
                 if(e.ctrlKey && e.key === 's'){
                     // console.log('ctrl+s')
                     if(this.$refs.input){
-                        this.$emit('save', this.$refs.input.innerText)
+                        let str = this.$refs.input.innerText
+                        this.$emit('save', str)
                     }
                     
                 }
@@ -49,9 +57,9 @@
         methods: {
             formatTxt(){
                 // console.log(this.content)
-                this.content = this.test(this.content)
-                this.$emit('input',this.content)
-                this.$emit('change')
+                let content = this.test(this.content)
+                this.$emit('change',content)
+                this.$emit('changestatus',true)  
             }, 
 
             trim(str){
@@ -61,10 +69,10 @@
             blurHandle(e){
                 // console.log(1,e.target.innerText)
                 let str = e.target.innerText
-                this.$emit('input',str)  
+                this.$emit('change',str)  
             },
             changeHandle(){
-                this.$emit('change')  
+                this.$emit('changestatus',true)  
             },
 
             test(text){

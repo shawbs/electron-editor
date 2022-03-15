@@ -7,8 +7,8 @@ const mutations = {
   set_files (state,data) {
     state.files = data
   },
-  set_folders (state,data) {
-    state.folders = data
+  set_folder (state,data) {
+    state.folder = data
   },
 }
 
@@ -16,8 +16,8 @@ const actions = {
   set_files({commit},data){
     commit('set_files',data)
   },
-  set_folders ({commit},data) {
-    commit('set_folders',data)
+  set_folder ({commit},data) {
+    commit('set_folder',data)
   },
 }
 
