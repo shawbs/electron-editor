@@ -1,6 +1,6 @@
 const state = {
   files: [],
-  folder: null
+  folder: ''
 }
 
 const mutations = {

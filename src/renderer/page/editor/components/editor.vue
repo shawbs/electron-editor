@@ -45,7 +45,7 @@
             window.addEventListener('keyup', e => {
                 // console.log(e)
                 if(e.ctrlKey && e.key === 's'){
-                    // console.log('ctrl+s')
+                    console.log('ctrl+s')
                     if(this.$refs.input){
                         let str = this.$refs.input.innerText
                         this.$emit('save', str)

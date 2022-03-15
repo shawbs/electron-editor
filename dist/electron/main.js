@@ -538,7 +538,7 @@ eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var vue_
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-eval("__webpack_require__.r(__webpack_exports__);\nvar state = {\n  files: [],\n  folder: null\n};\n\nvar mutations = {\n  set_files: function set_files(state, data) {\n    state.files = data;\n  },\n  set_folder: function set_folder(state, data) {\n    state.folder = data;\n  }\n};\n\nvar actions = {\n  set_files: function set_files(_ref, data) {\n    var commit = _ref.commit;\n\n    commit('set_files', data);\n  },\n  set_folder: function set_folder(_ref2, data) {\n    var commit = _ref2.commit;\n\n    commit('set_folder', data);\n  }\n};\n\n/* harmony default export */ __webpack_exports__[\"default\"] = ({\n  namespaced: true,\n  state: state,\n  mutations: mutations,\n  actions: actions\n});\n\n//# sourceURL=webpack:///./src/renderer/store/modules/editor.js?");
+eval("__webpack_require__.r(__webpack_exports__);\nvar state = {\n  files: [],\n  folder: ''\n};\n\nvar mutations = {\n  set_files: function set_files(state, data) {\n    state.files = data;\n  },\n  set_folder: function set_folder(state, data) {\n    state.folder = data;\n  }\n};\n\nvar actions = {\n  set_files: function set_files(_ref, data) {\n    var commit = _ref.commit;\n\n    commit('set_files', data);\n  },\n  set_folder: function set_folder(_ref2, data) {\n    var commit = _ref2.commit;\n\n    commit('set_folder', data);\n  }\n};\n\n/* harmony default export */ __webpack_exports__[\"default\"] = ({\n  namespaced: true,\n  state: state,\n  mutations: mutations,\n  actions: actions\n});\n\n//# sourceURL=webpack:///./src/renderer/store/modules/editor.js?");
 
 /***/ }),
 

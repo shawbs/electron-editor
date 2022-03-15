@@ -18,6 +18,8 @@
                 </div>
                 <div>
                     <el-button size="small" type="success" @click="openFolder">打开文件夹</el-button>
+                    <el-button size="small" type="danger" @click="closeAll">关闭所有</el-button>
+                    
                 </div>
             </div>
             
@@ -25,7 +27,7 @@
             <div class="side-body">
                 <div class="catalogue-box" v-if="myFiles.length>0">
                     <div v-for="(item,index) in myFiles" :key="item.id" class="file-item" :class="{'is-on':item.id == currenFile.id}" @contextmenu="contextmenu($event,item,index)" @click="clickFile(item)">
-                        <span class="file-name" >{{item.name}}
+                        <span class="file-name" >{{item.filename}}
                             <span v-if="item.isChange" class="icon-change ml-10"></span>
                         </span>
                     </div>
@@ -119,15 +121,22 @@ const Fs = require("fs");
         mounted(){
             console.log(this.files,this.folder)
             this.myFiles = [...this.files]
-            this.myFolder = this.folder ? {...this.folder} : null
+            if(this.folder){
+                this.initFolder(this.folder)
+            }
 
             ipcRenderer.on('selectedItem', (event, files)=>{
 
                 console.log(files);//输出选择的文件
             })
 
+            
         },
         methods: {
+            closeAll(){
+                this.$store.dispatch('editor/set_files',[])
+                this.$store.dispatch('editor/set_folder','')
+            },
             contextmenu(e,data,index){
                 console.log(e,data,e.x,e.y)
                 const menu = new Menu();
@@ -244,7 +253,7 @@ const Fs = require("fs");
                         files: arr
                     }
 
-                    this.$store.dispatch('editor/set_folder', this.myFolder)
+                    this.$store.dispatch('editor/set_folder', pathName)
                 })
             },
             readDir(pathName,cb){
@@ -296,18 +305,16 @@ const Fs = require("fs");
                 });
             },
             saveFile(content){
-                this.$set(this.currenFile,'content',content)
+                console.log('save ',this.currenFile.path)
                 this.$set(this.currenFile,'isChange', false)
+                this.$set(this.currenFile,'content',content)
                 // this.setChangeStatus(false)
                 this.$$showLoading()
-                console.log('save ',this.currenFile.path)
+                
                 // console.log(this.currenFile)
 
                 if(this.currenFile.type === 1){
                     this.$store.dispatch('editor/set_files',this.myFiles)
-                }
-                if(this.currenFile.type === 2){
-                    this.$store.dispatch('editor/set_folder',this.myFolder)
                 }
 
                 Fs.writeFile(this.currenFile.path,content, (err) => {
@@ -364,7 +371,7 @@ const Fs = require("fs");
             
             removeFolder(){
                 this.myFolder = null
-                this.$store.dispatch('editor/set_folder',null)
+                this.$store.dispatch('editor/set_folder','')
 
                 let index = this.myFiles.find(item => item.id === this.currenFile.id)
                 if(!index){
@@ -471,26 +478,27 @@ $light-color: #f2f2f2;
         }
 
         .side-hd{
-            border-bottom: 1px solid lighten($dark-color, 10);
+            // border-bottom: 1px solid lighten($dark-color, 10);
             flex: none;
         }
         .side-body{
-            border-bottom: 1px solid lighten($dark-color, 10);
+            border-top: 1px solid lighten($dark-color, 10);
             flex: 1;
             overflow: auto;
         }
         .side-fd{
+            border-top: 1px solid lighten($dark-color, 10);
             flex: none;
         }
 
         .catalogue-box{
-            border-bottom: 1px solid lighten($dark-color, 10);
+            // border-top: 1px solid lighten($dark-color, 10);
             padding: 5px;
             line-height: 1.5;
             font-size: 15px;
         }
         .folder-box{
-            border-bottom: 1px solid lighten($dark-color, 10);
+            border-top: 1px solid lighten($dark-color, 10);
             padding: 5px;
             line-height: 1.5;
             font-size: 15px;
@@ -558,17 +566,21 @@ $light-color: #f2f2f2;
             background: $light-color;
             color: #222;
             .side-hd{
-                border-bottom: 1px solid darken($light-color, 20);
+                // border-bottom: 1px solid darken($light-color, 20);
             }
             .side-body{
-                border-bottom: 1px solid darken($light-color, 20);
+                border-top: 1px solid darken($light-color, 20);
+            }
+            .side-fd{
+                border-top: 1px solid darken($light-color, 10);
             }
             .catalogue-box{
-                border-bottom: 1px solid darken($light-color, 20);
+                // border-top: 1px solid darken($light-color, 20);
             }
             .folder-box{
-                border-bottom: 1px solid darken($light-color, 10);
+                border-top: 1px solid darken($light-color, 10);
             }
+            
             .folder-title{
                 [class^="el-icon"]:hover{
                     background-color: darken($light-color, 10);
