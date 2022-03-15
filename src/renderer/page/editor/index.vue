@@ -24,11 +24,10 @@
 
             <div class="side-body">
                 <div class="catalogue-box" v-if="myFiles.length>0">
-                    <div v-for="(item,index) in myFiles" :key="item.id" class="file-item" :class="{'is-on':item.id == currenFile.id}" >
-                        <span @click="clickFile(item)">{{item.name}}
+                    <div v-for="(item,index) in myFiles" :key="item.id" class="file-item" :class="{'is-on':item.id == currenFile.id}" @contextmenu="contextmenu($event,item,index)" @click="clickFile(item)">
+                        <span class="file-name" >{{item.name}}
                             <span v-if="item.isChange" class="icon-change ml-10"></span>
                         </span>
-                        <span class="el-icon-close" @click="removeFile(index)"></span>
                     </div>
                 </div>
 
@@ -36,13 +35,31 @@
                     
                     <div class="folder-title">
                         <span>{{myFolder.name}}</span>
-                        <span class="el-icon-close" @click="removeFolder()"></span>
+                        <div>
+                            <span class="el-icon-plus" @click="addHandle()" title="新建"></span>
+                            <span class="el-icon-refresh" @click="refreshFolder()" title="刷新"></span>
+                            <span class="el-icon-close" @click="removeFolder()" title="关闭"></span>
+                        </div>
                     </div>
-                    <div v-for="(item,index) in myFolder.files" :key="index" class="file-item" :class="{'is-on':item.id == currenFile.id}" >
-                        <span @click="clickFile2(item)">{{item.name}}
+
+                    <div class="file-item new-file" v-if="newFile">
+                        <input type="text" v-model="newFile.name" />
+                        <span class="el-icon-check" @click="saveAddFile"></span>
+                        <span class="el-icon-close" @click="cancleAddFile"></span>
+                    </div>
+
+                    <div v-for="(item,index) in myFolder.files" :key="index" class="file-item" :class="{'is-on':item.id == currenFile.id}" @contextmenu="contextmenu($event,item,index)" @click="clickFile2(item)">
+                        <span class="file-name" v-if="item.renameing">
+                            <input type="text" v-model="item.name" />
+                            <span class="el-icon-check" @click="saveRename(item)"></span>
+                            <span class="el-icon-close" @click="cancleRename(item)"></span>
+                        </span>
+                        <span class="file-name" v-else>
+                            {{item.name}}
                             <span v-if="item.isChange" class="icon-change ml-10"></span>
                         </span>
                     </div>
+                    
                 </div>
             </div>
 
@@ -75,7 +92,10 @@ import editor from './components/editor.vue'
 import welcome from './components/welcome.vue'
 import {remote   } from 'electron'
 import {mapState} from 'vuex'
-var dragtime
+const Menu = remote.Menu;
+const MenuItem = remote.MenuItem;
+const Path = require('path')
+const Fs = require("fs");
     export default {
         components: {editor,welcome},
         data(){
@@ -86,9 +106,11 @@ var dragtime
                 theme: 'light', // dark light
                 currenFile: {},
 
-                myFiles: [],
-                myFolder: null
-                // folder: { name: '',files: []}
+                myFiles: [], 
+                myFolder: null, // folder: { name: '',files: []}
+
+                newFile: null
+                
             }
         },
         computed: {
@@ -106,6 +128,36 @@ var dragtime
 
         },
         methods: {
+            contextmenu(e,data,index){
+                console.log(e,data,e.x,e.y)
+                const menu = new Menu();
+
+                var menuItem1 = new MenuItem({label:'重命名',click:()=>{
+                    console.log(data)
+                    data.renameing = true
+                    // this.removeFile(index)
+                }});//创建一个子菜单项
+                var menuItem2 = new MenuItem({label:'删除',click:()=>{
+                    this.removeFile(index)   
+                }});//创建一个子菜单项
+                var menuItem3 = new MenuItem({label:'删除文件',click:()=>{
+                    this.removeFileLocal(data.path) 
+                }});
+
+                if(data.type == 1){
+                    menu.append(menuItem2);//将菜单项添加到menu中
+                }
+                if(data.type == 2){
+                    menu.append(menuItem1);//将菜单项添加到menu中
+                    menu.append(menuItem3);//将菜单项添加到menu中
+                }                
+
+                e.preventDefault();//阻止默认行为
+                var x = e.x;//鼠标右键点击的横坐标
+                var y = e.y;//鼠标右键点击的纵坐标
+                menu.popup({x:x,y:y});
+                return false;
+            },
             onmousedown(e){
                 // console.log('down',e)
                 this.draging = true
@@ -133,12 +185,15 @@ var dragtime
                 let path = file.raw.path
 
                 this.readFile(path, content => {
+                    let name = file.name.substring(0,file.name.lastIndexOf('.txt'))
                     let data = {
                         id: path,
-                        name: file.name,
+                        filename: file.name,
+                        name: name,
                         path: path,
                         content: content,
                         isChange:false,
+                        renameing:false,
                         type: 1 //1单独文件 2目录文件
                     }
 
@@ -162,43 +217,53 @@ var dragtime
                 }, res => {
                     console.log(res)
                     if(res){
-                        let pathName = res[0]
-                        let path = require('path')
-
-                        let folderName = path.parse(pathName).name
-                        this.readDir(pathName, files => {
-
-                            let arr = files.map(item => {
-                                return {
-                                    'id': path.join(pathName,item),
-                                    'name': item,
-                                    'path': path.join(pathName,item),
-                                    'content': '',
-                                    'isChange':false,
-                                    'type': 2
-                                }
-                            })
-                            // console.log(files)
-                            this.myFolder = {
-                                name: folderName,
-                                files: arr
-                            }
-
-                            this.$store.dispatch('editor/set_folder', this.myFolder)
-                        })
+                        this.initFolder(res[0])
                     }
+                })
+            },
+            initFolder(pathName){
+                let folderName = Path.parse(pathName).name
+                this.readDir(pathName, files => {
+                    let arr = files.map(item => {
+                        let name = item.substring(0,item.lastIndexOf('.txt'))
+                        return {
+                            'id': Path.join(pathName,item),
+                            'filename': item,
+                            'name': name,
+                            'path': Path.join(pathName,item),
+                            'content': '',
+                            'isChange':false,
+                            'renameing':false,
+                            'type': 2
+                        }
+                    })
+                    // console.log(files)
+                    this.myFolder = {
+                        name: folderName,
+                        path: pathName,
+                        files: arr
+                    }
+
+                    this.$store.dispatch('editor/set_folder', this.myFolder)
                 })
             },
             readDir(pathName,cb){
                 console.log('open ',pathName)
-                let fs = require("fs");
-                fs.readdir(pathName,{ withFileTypes: true }, (err, data) => {
+                Fs.readdir(pathName,{ withFileTypes: true }, (err, data) => {
                     if (err) {
                         this.$$hideLoading()
                         return console.error(err);
                     }
                     this.$$hideLoading()
-                    // console.log(data)
+                    console.log(data)
+
+                    //过滤非.txt文件
+                    let arr = data.filter(item => {
+                        let str = item.substring(item.lastIndexOf('.'))
+                        // console.log(str)
+                        return str === '.txt'
+                    })
+
                     cb && cb(data)
                 });
             },
@@ -221,8 +286,7 @@ var dragtime
             readFile(path,cb){
                 this.$$showLoading()
                 console.log('open ',path)
-                let fs = require("fs");
-                fs.readFile(path, (err, data) => {
+                Fs.readFile(path, (err, data) => {
                     if (err) {
                         this.$$hideLoading()
                         return console.error(err);
@@ -246,8 +310,7 @@ var dragtime
                     this.$store.dispatch('editor/set_folder',this.myFolder)
                 }
 
-                let fs = require("fs");
-                fs.writeFile(this.currenFile.path,content, (err) => {
+                Fs.writeFile(this.currenFile.path,content, (err) => {
                     if (err) {
                         this.$$hideLoading()
                         return console.error(err);
@@ -258,7 +321,7 @@ var dragtime
                 });
             },
             clickFile(file){
-                if(file.name.indexOf('.txt') === -1){
+                if(file.filename.indexOf('.txt') === -1){
                     return this.$$error("格式不支持")
                 }
 
@@ -272,7 +335,7 @@ var dragtime
                 }
             },
             clickFile2(file){
-                if(file.name.indexOf('.txt') === -1){
+                if(file.filename.indexOf('.txt') === -1){
                     return this.$$error("格式不支持")
                 }
                 if(file.isChange){
@@ -293,6 +356,12 @@ var dragtime
                     }
                 }
             },
+            removeFileLocal(path){
+                console.log('rm',path)
+                Fs.rm(path);
+                this.refreshFolder()
+            },
+            
             removeFolder(){
                 this.myFolder = null
                 this.$store.dispatch('editor/set_folder',null)
@@ -302,6 +371,58 @@ var dragtime
                     this.currenFile = {}
                 }
             },
+            addHandle(){
+                this.newFile = {
+                    name: ''
+                }
+            },
+            saveAddFile(){
+                let name = this.newFile.name + '.txt'
+                let path = Path.join(this.myFolder.path,name)
+
+                if(Fs.existsSync(path)){
+                    return this.$$error("文件已存在")
+                }
+
+                console.log('save',path)
+                Fs.writeFile(path,'',err => {
+                    if (err) {
+                        return console.error(err);
+                    }
+
+                    this.newFile = null
+
+                    this.refreshFolder()
+                })
+                
+            },
+            cancleAddFile(){
+                this.newFile = null
+            },
+            refreshFolder(){
+                this.initFolder(this.myFolder.path)
+            },
+            saveRename(data){
+                console.log(data)
+                
+                let oldPath = data.path
+                let newPath = Path.join(this.myFolder.path, data.name + '.txt')
+
+                // console.log(oldPath,'->',newPath)
+
+                if(Fs.existsSync(newPath)){
+                    return this.$$error("文件已存在")
+                }
+
+                Fs.rename(oldPath,newPath);
+
+                data.renameing=false
+
+                // this.refreshFolder()
+            },
+            cancleRename(data){
+                data.renameing=false
+            }
 
         }
     }
@@ -325,6 +446,7 @@ $light-color: #f2f2f2;
     height: 100%;
     overflow: hidden;
     .side-box{
+        padding-right: 5px;
         flex: none;
         width: 200px;
         height: 100%;
@@ -355,6 +477,7 @@ $light-color: #f2f2f2;
         .side-body{
             border-bottom: 1px solid lighten($dark-color, 10);
             flex: 1;
+            overflow: auto;
         }
         .side-fd{
             flex: none;
@@ -378,7 +501,8 @@ $light-color: #f2f2f2;
                 justify-content: space-between;
                 align-items: center;
                 margin-bottom: 1px;
-                .el-icon-close:hover{
+                
+                [class^="el-icon"]:hover{
                     background-color: lighten($dark-color, 6);
                 }
             }
@@ -403,7 +527,7 @@ $light-color: #f2f2f2;
             &:hover,&.is-on{
                 background-color: lighten($dark-color, 10);
             }
-            .el-icon-close:hover{
+            [class^="el-icon"]:hover{
                 background-color: lighten($dark-color, 6);
             }
         }
@@ -446,7 +570,7 @@ $light-color: #f2f2f2;
                 border-bottom: 1px solid darken($light-color, 10);
             }
             .folder-title{
-                .el-icon-close:hover{
+                [class^="el-icon"]:hover{
                     background-color: darken($light-color, 10);
                 }
             }
@@ -457,7 +581,7 @@ $light-color: #f2f2f2;
                 &:hover,&.is-on{
                     background-color: darken($light-color, 20);
                 }
-                .el-icon-close:hover{
+                [class^="el-icon"]:hover{
                     background-color: darken($light-color, 10);
                 }
             }
