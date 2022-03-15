@@ -445,6 +445,11 @@ $light-color: #f2f2f2;
             .folder-box{
                 border-bottom: 1px solid darken($light-color, 10);
             }
+            .folder-title{
+                .el-icon-close:hover{
+                    background-color: darken($light-color, 10);
+                }
+            }
             .file-item{
                 .icon-change{
                     background-color: #666;
